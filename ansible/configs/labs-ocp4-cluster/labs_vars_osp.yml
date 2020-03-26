@@ -1,0 +1,409 @@
+# The type of cloud provider this will be deployed to
+cloud_provider: osp
+
+# Authenication credentials for OpenStack in order to create the things.
+# These should be included with your secrets, but are listed here for reference
+# osp_auth_url:
+# osp_auth_username:
+# osp_auth_password:
+# osp_auth_cloud:
+# osp_auth_project_domain: #usually set to "default"
+# osp_auth_user_domain: #usually set to "default"
+
+
+# This is an account that must exist in OpenStack.
+# It is used to create projects, access, Heat templates
+admin_user: tkummer
+
+# The name of the project that will be created in OpenStack for the user
+osp_project_name: "{{ guid }}"
+
+# Set this to true if you need to create a new project in OpenStack
+# This should almost always be set to true for OpenShift installations
+# If it is set to false, the {{ osp_project_name }} must already exist and
+# should be able to run whatever you are deploying
+osp_project_create: false
+
+# This is the user that Ansible will use to connect to the nodes it is
+# configuring from the admin/control host
+ansible_user: cloud-user
+remote_user: cloud-user
+
+# The domain that you want to add DNS entries to 
+
+# The base domain
+ocp4_base_domain: "{{ osp_cluster_dns_zone }}"
+
+# The dynamic DNS server you will add entries to.
+# NOTE: This is only applicable when {{ use_dynamic_dns}} is true
+
+# Whether to wait for an ack from the DNS servers before continuing
+wait_for_dns: true
+
+# Authenticaion for DDNS, Must be set in secrets
+# ddns_key_name:
+# ddns_secret_name:
+
+# Set this to true if you want a FIPs provisioned for an OpenShift on OpenStack install
+# This will provision an API and Ingress FIP
+openshift_fip_provision: True
+
+# This requires DDNS or other DNS solution configured
+# If enabled, it will add DNS entries for the API and Ingress FIPs
+openshift_fip_dns: True
+
+# The external network in OpenStack where the floating IPs (FIPs) come from
+provider_network: external
+
+# If you are deploying OpenShift, this should be set to the network that you
+# want to use and will be used to create security groups.
+# It will pull the subnet CIDR from the defined network below, based on the
+# name you define for {{ ocp_network }}
+ocp_network: "ocp"
+ocp_network_subnet_cidr: "{{ networks | json_query(query_subnet_cidr) | first }}"
+query_subnet_cidr: "[?name=='{{ ocp_network }}'].subnet_cidr"
+
+quota_num_instances: 15
+quota_num_cores: 72
+quota_memory: 163840 # in MB
+quota_num_volumes: 25
+quota_volumes_gigs: 1000
+#quota_loadbalancers: #when Octavia is available
+#quota_pool: #when Octavia is available
+quota_networks: 3
+quota_subnets: 3
+quota_routers: 3
+quota_fip: 5
+quota_sg: 10
+quota_sg_rules: 100
+
+# Instances to be provisioned in new project
+# Provide these as a list.
+# Each instance type can have any number of replicas deployed with the same
+# configuration.
+# Metadata in OpenStack is equivelent to tags in AWS
+# These instances will be created with Cinder persistent volumes
+stacks_infra:
+- name: bastion
+# IMPROVE this ensures that the ssh key is created only in once (in first stack)
+  key: true
+- name: utility
+stacks_install:
+- name: bootstrap
+- name: master-nodes
+- name: worker-nodes
+
+instances_infra:
+- name: bastion
+  stack: bastion
+  count: 1
+  unique: yes
+  alt_name: bastion
+  image_id: "{{ bastion_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ bastion_instance_type }}"
+  metadata:
+  - AnsibleGroup: "bastions,clientvms"
+  - function: bastion
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+
+- name: loadbalancer
+  count: 1
+  stack: utility
+  unique: yes
+  alt_name:
+  image_id: "{{ bastion_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ bastion_instance_type }}"
+  metadata:
+  - AnsibleGroup: "lb_vm"
+  - function: loadbalancer
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+  - oc-sec-group
+  - dns-sec-group
+  - https-sec-group
+
+- name: web-server
+  count: 1
+  unique: yes
+  stack: utility
+  alt_name:
+  image_id: "{{ bastion_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ bastion_instance_type }}"
+  metadata:
+  - AnsibleGroup: "host_www"
+  - function: web-server
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+  - dns-sec-group
+  - http-sec-group
+
+instances_install:
+- name: bootstrap
+  count: 1
+  stack: bootstrap
+  unique: yes
+  alt_name:
+  image_id: "{{ master_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ master_instance_type }}"
+  metadata:
+  - AnsibleGroup: "bootstrap"
+  - function: bootstrap
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+  - oc-sec-group
+  - dns-sec-group
+
+- name: master-node
+  count: 3 
+  unique: yes
+  stack: master-nodes
+  alt_name:
+  image_id: "{{ master_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ master_instance_type }}"
+  metadata:
+  - AnsibleGroup: "master"
+  - function: master
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+  - oc-sec-group
+  - dns-sec-group
+  - https-sec-group
+   
+
+- name: worker-node
+  count: 1 
+  unique: yes
+  stack: worker-nodes
+  alt_name:
+  image_id: "{{ worker_instance_image }}"
+  floating_ip: yes
+  flavor:
+    osp: "{{ worker_instance_type }}"
+  metadata:
+  - AnsibleGroup: "worker"
+  - function: worker
+  - user: "{{ student_name }}"
+  - project: "{{ project_tag }}"
+  - ostype: linux
+  - Purpose: "{{ purpose }}"
+  rootfs_size: 30
+  network: ocp
+  security_groups:
+  - ssh-sec-group
+  - oc-sec-group
+  - dns-sec-group
+  - https-sec-group
+
+
+# A list of the private networks and subnets to create in the project
+# You can create as many as you want, but at least one is required.
+# Use the name of the networks where appropriate in the instance list
+# TODO correct DNS servers
+networks:
+- name: ocp
+  stack: bastion
+  shared: "false"
+  subnet_cidr: 192.168.47.0/24
+  gateway_ip: 192.168.47.1
+  allocation_start: 192.168.47.10
+  allocation_end: 192.168.47.254
+  dns_nameservers: [8.8.8.8, 8.8.4.4]
+  create_router: true
+
+# Uncomment to create a UtilityVM that can host an NFS server
+# - name: utilityvm
+#   count: 1
+#   image_id: "{{ utilityvm_instance_image }}"
+#   floating_ip: no
+#   flavor:
+#     osp: "{{ utilityvm_instance_type }}"
+#   metadata:
+#   - AnsibleGroup: "utility"
+#   - function: bastion
+#   - user: "{{ student_name }}"
+#   - project: "{{ project_tag }}"
+#   - ostype: linux
+#   - Purpose: "{{ purpose }}"
+#   rootfs_size: 500
+#   network: ocp
+#   security_groups:
+#   - utility_sg
+
+# Security groups and associated rules. This will be provided
+#when the Heat template is generated separate groups and rules
+security_groups:
+- name: ssh-sec-group
+  stack: bastion
+  description: Bastion security group allows basic icmp and SSH ingress and egress to *
+  rules:
+  - protocol: icmp
+    direction: ingress
+  - protocol: tcp
+    direction: ingress
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 0.0.0.0/0
+- name: oc-sec-group
+  stack: bastion
+  description: "My Openshift Sec Group"
+  rules:
+    - protocol: tcp
+      port_range_min: 6443
+      port_range_max: 6443
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: tcp
+      port_range_min: 22623
+      port_range_max: 22623
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: tcp
+      port_range_min: 2379
+      port_range_max: 2380
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: tcp
+      port_range_min: 9000
+      port_range_max: 9999
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: tcp
+      port_range_min: 10249
+      port_range_max: 10259
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: tcp
+      port_range_min: 10256
+      port_range_max: 10256
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: udp
+      port_range_min: 4789
+      port_range_max: 4789
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: udp
+      port_range_min: 6081
+      port_range_max: 6081
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: udp
+      port_range_min: 9000
+      port_range_max: 9999
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: udp
+      port_range_min: 30000
+      port_range_max: 32767
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+- name: "dns-sec-group"
+  stack: bastion
+  description: "My DNS Sec Group"
+  rules:
+    - protocol: tcp
+      port_range_min: 53
+      port_range_max: 53
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+    - protocol: udp
+      port_range_min: 53
+      port_range_max: 53
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+- name: "http-sec-group"
+  description: "My HTTP Sec Group"
+  stack: bastion
+  rules:
+    - protocol: tcp
+      port_range_min: 80
+      port_range_max: 80
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+- name: "https-sec-group"
+  description: "My HTTPS Sec Group"
+  stack: bastion
+  rules:
+    - protocol: tcp
+      port_range_min: 443
+      port_range_max: 443
+      direction: ingress
+      remote_ip_prefix: 0.0.0.0/0
+
+
+
+# Uncomment for a UtilityVM
+# - name: utility_sg
+#   description: Utility security group allows SSH from bastion, NFS traffic and egress to *
+#   rules:
+#   - protocol: icmp
+#     direction: ingress
+#     remote_group: "bastion_sg"
+#   - protocol: tcp
+#     direction: ingress
+#     port_range_min: 22
+#     port_range_max: 22
+#     remote_group: "bastion_sg"
+#   - protocol: tcp
+#     direction: ingress
+#     port_range_min: 2049
+#     port_range_max: 2049
+#     remote_ip_prefix: "{{ ocp_network_subnet_cidr }}"
+#     description: "NFS traffic"
+
+# These will influence the bastion if it is being deployed
+bastion_instance_type: m1.medium
+bastion_instance_image: rhel-server-7.7-x86_64
+
+# These will influence the utility VM, which is primarily used for disconnected
+# install, but can be used for anything really.
+# utilityvm_instance_type: 2c2g30d
+# utilityvm_instance_image: rhel-server-7.7-update-2
+
+# Master Instance Type
+master_instance_type: ocp1.medium
+master_instance_image: rhcos-4.3.0-x86_64
+# Worker Instance Type
+worker_instance_type: ocp1.medium
+worker_instance_image: rhcos-4.3.0-x86_64
