@@ -26,8 +26,8 @@ osp_project_create: false
 
 # This is the user that Ansible will use to connect to the nodes it is
 # configuring from the admin/control host
-ansible_user: cloud-user
-remote_user: cloud-user
+ansible_user: centos
+remote_user: centos
 
 # The domain that you want to add DNS entries to 
 
@@ -125,7 +125,7 @@ instances_infra:
   flavor:
     osp: "{{ bastion_instance_type }}"
   metadata:
-  - AnsibleGroup: "lb_vm"
+  - AnsibleGroup: "lb_vms"
   - function: loadbalancer
   - user: "{{ student_name }}"
   - project: "{{ project_tag }}"
@@ -394,7 +394,7 @@ security_groups:
 
 # These will influence the bastion if it is being deployed
 bastion_instance_type: m1.medium
-bastion_instance_image: rhel-server-7.7-x86_64
+bastion_instance_image: CentOS-7-x86_64
 
 # These will influence the utility VM, which is primarily used for disconnected
 # install, but can be used for anything really.

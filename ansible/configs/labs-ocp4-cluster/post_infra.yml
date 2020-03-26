@@ -1,4 +1,4 @@
-- name: Step 002 Post Infrastructure
+- name: Step 002.0 Post Infrastructure
   hosts: localhost
   connection: local
   become: false
@@ -49,3 +49,27 @@
     loop_control:
       label: item.name
     when: openshift_fip_provision
+
+#- name: Step 002.1 Post Infrastructure - Generate and activate the HAproxy configuration
+#  hosts: lb_vms
+#  tasks:
+#  - import_role:
+#      name: manage-haproxy
+#      tasks_from: install
+#    tags:
+#    - 'always'
+#  - import_role:
+#      name: manage-haproxy
+#      tasks_from: generate-config
+#    tags:
+#    - 'always'
+#  - import_role:
+#      name: manage-haproxy
+#      tasks_from: activate-config
+#    tags:
+#    - 'always'
+#
+#- name: Step 002.2 Post Infrastructure - Configure web-server
+#  hosts: lb_vms
+#  tasks:
+#
