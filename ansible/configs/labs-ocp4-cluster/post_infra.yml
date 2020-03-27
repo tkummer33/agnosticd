@@ -70,6 +70,8 @@
 #    - 'always'
 #
 #- name: Step 002.2 Post Infrastructure - Configure web-server
-#  hosts: lb_vms
+#  hosts: host_www
+#  become: true
 #  tasks:
-#
+#  - import_role:
+#      name: config-httpd
