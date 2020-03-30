@@ -199,3 +199,4 @@ secret_file: /home/tkummer/secrets.yml
 # Remove Kubeadmin user upon successful installation of Authentication
 #ocp4_idm_remove_kubeadmin: true
 # ---------------------------------------------------------------
+httpd_seed_dir: "{{ output_dir }}/ignition_files/"
