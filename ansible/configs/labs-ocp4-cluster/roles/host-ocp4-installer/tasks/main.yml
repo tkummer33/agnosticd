@@ -26,7 +26,7 @@
   become: no
   command: openshift-install create ignition-configs --dir=/home/{{ ansible_user }}/{{ cluster_name }}
 
-- name: copy the ignition directory
+- name: fetch the ignition directory
   become: no
   fetch: 
     dest: /tmp/output_dir/ignition_files/

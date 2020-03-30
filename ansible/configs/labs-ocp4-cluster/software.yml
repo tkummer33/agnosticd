@@ -45,3 +45,15 @@
     include_role:
       name: config-httpd
 
+- name: step 004.4 create the user-data
+  hosts: localhost
+  become: false
+  tasks:
+  - name: create user-data
+    template:
+      src: files/user-data.j2
+      dest: /tmp/output_dir/{{ item }}
+    loop:
+    - worker
+    - master
+    - bootstrap
