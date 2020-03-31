@@ -49,10 +49,12 @@
   hosts: localhost
   become: false
   tasks:
+  - debug:
+      var: r_osp_facts
   - name: create user-data
     template:
       src: files/user-data.j2
-      dest: /tmp/output_dir/{{ item }}
+      dest: "{{ output_dir }}/{{ item }}"
     loop:
     - worker
     - master

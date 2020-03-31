@@ -122,13 +122,13 @@ resources:
       count: {{ instance['count'] }}
 {% if instance['stack'] == "bootstrap"  %}
       user_data:
-        get_file: /tmp/output_dir/user-data/bootstrap
+        get_file: {{ output_dir }}/bootstrap
 {% elif instance['stack'] == "worker-nodes"  %}
       user_data:
-        get_file: /tmp/output_dir/user-data/worker
+        get_file: {{ output_dir }}/worker
 {% elif instance['stack'] == "master-nodes"  %}
       user_data:
-        get_file: /tmp/output_dir/user-data/master
+        get_file: {{ output_dir }}/master
 {% endif %}
       resource_def:
         type: {{ heat_nested_template }}_{{ item.name }}_cloud_nested_template.yaml
