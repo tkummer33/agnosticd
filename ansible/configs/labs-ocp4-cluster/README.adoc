@@ -47,7 +47,8 @@ You can create yaml files of your desired configs and secrets and execute them f
 == Workstation Setup:
 [LABS] here we might use container in the future instead of  setting up localhost
 
-You need to have the openstack client installed on your system
-yum install python3-openstackclient
-
 You also need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
+
+install required packages
+git clone https://github.com/redhat-cop/agnosticd.git cd agnosticd git checkout disco-ocp4
+pip install -r ./ansible/configs/ocp4-disconnected-ha-lab/files/admin_host_requirements.txt
