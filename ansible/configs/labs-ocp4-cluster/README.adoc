@@ -11,7 +11,7 @@ The following config includes:
 * DNS and other resources for OCP4
 * SSH access setup
 
-== Review the `default_vars.yml` variable file
+== Review the `labs_default_vars.yml` variable file
 
 * This file link:./labs_default_vars.yml[./labs_default_vars.yml] contains all the variables you need to define to control the deployment of your environment.
 
