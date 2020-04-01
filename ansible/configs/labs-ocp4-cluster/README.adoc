@@ -47,9 +47,7 @@ You can create yaml files of your desired configs and secrets and execute them f
 == Workstation Setup:
 [LABS] here we might use container in the future instead of  setting up localhost
 
-With either setup, you also need to have a `clouds.yaml` file on your system with credentials.
-You can store this either in your working directory or in `~/.config/openstack/clouds.yaml`.
-
-[LABS]Clouds.yaml is still required at this point because it is used on the bastion host to execute openstack commands. This will be converted to rc files going forward
-
+You need to have the openstack client installed on your system
 yum install python3-openstackclient
+
+You also need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
