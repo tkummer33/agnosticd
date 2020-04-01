@@ -9,7 +9,7 @@ lets_encrypt_production: false
 
 # OCP4
 
-software_to_deploy: openshift4
+#software_to_deploy: openshift4
 
 ocp4_idm_admin_user: opentlc-mgr
 ocp4_idm_install: htpasswd
