@@ -52,3 +52,5 @@ You also need to source the rc file for the environment. The current AgnosticD d
 install required packages
 git clone https://github.com/redhat-cop/agnosticd.git cd agnosticd git checkout disco-ocp4
 pip install -r ./ansible/configs/ocp4-disconnected-ha-lab/files/admin_host_requirements.txt
+
+More detailed env_setup section is ocp4-cluster config
