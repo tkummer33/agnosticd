@@ -123,6 +123,7 @@ worker_instance_count: 2
 
 # This will run in the post_software phase and run playbooks in the
 # software_playbooks directory
+# for labs deployment we might need to create new software playbooks in software_playbooks directory. Currently the software steps are done from the config software.yaml 
 #software_to_deploy: openshift4
 
 # Install OpenShift 4 - and which version

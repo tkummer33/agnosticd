@@ -31,7 +31,7 @@ Add this variable to your secret file.
 
 * secret.yaml skeleton can be found here link:./secret_skeleton.yaml[./secret_skeleton.yml]. COPY IT TO YOUR HOMEDIR AND EDIT THERE.
 
-[LABS] This might be replaced by RC file. At this point the AgnosticD expects the vars as they are in secret.yaml, unfortunately I didn't find the option to use custom CA in secret.yaml so you have to export your OS_CACERT as well.
+[LABS] This might be partially replaced by RC file. At this point the AgnosticD expects the vars as they are in secret.yaml, unfortunately I didn't find the option to use custom CA in secret.yaml so you have to export your OS_CACERT as well.
 
 [source,yaml]
 ----
@@ -100,9 +100,4 @@ git clone https://github.com/redhat-cop/agnosticd.git
 cd agnosticd
 git checkout disco-ocp4
 pip install -r ./ansible/configs/ocp4-disconnected-ha-lab/files/macos_requirements.txt
-
-
-
-User access:
-student_name is defined either in sample_vars or from deployer script. This is the account that people will use and will generally match their opentlc ID. lab-user is the default defined in the role
 
