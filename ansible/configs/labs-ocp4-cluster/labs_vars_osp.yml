@@ -248,7 +248,7 @@ networks:
   gateway_ip: 192.168.47.1
   allocation_start: 192.168.47.10
   allocation_end: 192.168.47.254
-  dns_nameservers: [8.8.8.8, 8.8.4.4]
+  dns_nameservers: [10.9.51.41, 8.8.8.8]
   create_router: true
 
 # Uncomment to create a UtilityVM that can host an NFS server

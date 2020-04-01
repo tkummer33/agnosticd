@@ -6,35 +6,34 @@
     OS_PROJECT_DOMAIN_ID: "{{ osp_auth_project_domain }}"
     OS_USER_DOMAIN_NAME: "{{ osp_auth_user_domain }}"
 
-  block:
-    - name: Check if Heat stack already exists
+#  block:
+#    - name: Check if Heat stack already exists
+#      command: >-
+#        openstack stack show -f json base-stack-{{ guid }}-bastion
+#      register: r_show
+#      failed_when: false
+#      changed_when: false
+#      tags: heat
+
+#   - when: r_show.rc == 0
+#      block:
+
+#       - name: Update Heat stack from generated template
+#          command: >-
+#            openstack stack update -f json --wait
+#            -t {{ heat_master_template }}_bastion_cloud_master_template.yaml
+#            base-stack-{{ guid }}-bastion
+#          register: r_hot_out_update
+
+#    - when: r_show.rc != 0
+#      block:
+    - name: Create Heat stack from generated template
       command: >-
-        openstack stack show -f json base-stack-{{ guid }}-bastion
-      register: r_show
-      failed_when: false
-      changed_when: false
-      tags: heat
-
-    - when: r_show.rc == 0
-      block:
-
-        - name: Update Heat stack from generated template
-          command: >-
-            openstack stack update -f json --wait
-            -t {{ heat_master_template }}_bastion_cloud_master_template.yaml
-            base-stack-{{ guid }}-bastion
-          register: r_hot_out_update
-
-    - when: r_show.rc != 0
-      block:
-
-        - name: Create Heat stack from generated template
-          command: >-
-            openstack stack create -f json --wait
-            -t "{{ heat_master_template }}_{{ item.name }}_cloud_master_template.yaml"
-            base-stack-{{ guid }}-{{ item.name }}
-          register: r_hot_out_create
-          loop: "{{ stacks }}" 
+        openstack stack create -f json --wait
+        -t "{{ heat_master_template }}_{{ item.name }}_cloud_master_template.yaml"
+        base-stack-{{ guid }}-{{ item.name }}
+      register: r_hot_out_create
+      loop: "{{ stacks }}" 
     
     - name: Grab outputs
       command: >-
