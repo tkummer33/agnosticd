@@ -81,10 +81,21 @@ resources:
 {#          delete_on_termination: true #}
 {#          volume_size: { get_param: volume_size } #}
 {#          boot_index: 0 #}
+{% if item['name'] == "bootstrap"  %}
+      user_data:
+        get_file: {{ output_dir }}/bootstrap
+{% elif item['name'] == "worker-nodes"  %}
+      user_data:
+        get_file: {{ output_dir }}/worker
+{% elif item['name'] == "master-nodes"  %}
+      user_data:
+        get_file: {{ output_dir }}/master
+{% else %}
       user_data: |
         #cloud-config
         ssh_authorized_keys: {{ all_ssh_authorized_keys | to_json }}
       user_data_format: RAW
+{% endif %}
       networks:
         - port: { get_resource: port }
       metadata: 
