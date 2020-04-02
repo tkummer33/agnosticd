@@ -84,12 +84,15 @@ resources:
 {% if item['name'] == "bootstrap"  %}
       user_data:
         get_file: {{ output_dir }}/bootstrap
+      user_data_format: RAW
 {% elif item['name'] == "worker-nodes"  %}
       user_data:
         get_file: {{ output_dir }}/worker
+      user_data_format: RAW
 {% elif item['name'] == "master-nodes"  %}
       user_data:
         get_file: {{ output_dir }}/master
+      user_data_format: RAW
 {% else %}
       user_data: |
         #cloud-config
