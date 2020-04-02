@@ -13,6 +13,12 @@
     OS_PROJECT_DOMAIN_ID: "{{ osp_auth_project_domain }}"
     OS_USER_DOMAIN_NAME: "{{ osp_auth_user_domain }}"
   tasks:
+  - name: debug hostvars
+    debug:
+      var: hostvars
+  - name: debug
+    debug:
+      var: r_osp_facts
   - name: Create DNS entries for OpenShift FIPs
     debug:
       msg: Currently using {{ osp_cluster_dns_zone }} on server {{ osp_cluster_dns_server }}

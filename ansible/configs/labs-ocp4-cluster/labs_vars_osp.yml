@@ -46,11 +46,11 @@ wait_for_dns: true
 
 # Set this to true if you want a FIPs provisioned for an OpenShift on OpenStack install
 # This will provision an API and Ingress FIP
-openshift_fip_provision: True
+openshift_fip_provision: False
 
 # This requires DDNS or other DNS solution configured
 # If enabled, it will add DNS entries for the API and Ingress FIPs
-openshift_fip_dns: True
+openshift_fip_dns: False
 
 # The external network in OpenStack where the floating IPs (FIPs) come from
 provider_network: external
@@ -145,7 +145,7 @@ instances_infra:
   stack: utility
   alt_name:
   image_id: "{{ bastion_instance_image }}"
-  floating_ip: yes
+  floating_ip: no
   flavor:
     osp: "{{ bastion_instance_type }}"
   metadata:
@@ -169,7 +169,7 @@ instances_install:
   unique: yes
   alt_name:
   image_id: "{{ master_instance_image }}"
-  floating_ip: yes
+  floating_ip: no
   flavor:
     osp: "{{ master_instance_type }}"
   metadata:
@@ -192,7 +192,7 @@ instances_install:
   stack: master-nodes
   alt_name:
   image_id: "{{ master_instance_image }}"
-  floating_ip: yes
+  floating_ip: no
   flavor:
     osp: "{{ master_instance_type }}"
   metadata:
@@ -217,7 +217,7 @@ instances_install:
   stack: worker-nodes
   alt_name:
   image_id: "{{ worker_instance_image }}"
-  floating_ip: yes
+  floating_ip: no
   flavor:
     osp: "{{ worker_instance_type }}"
   metadata:
