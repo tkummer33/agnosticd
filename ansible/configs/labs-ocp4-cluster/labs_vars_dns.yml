@@ -1,0 +1,125 @@
+---
+
+#ansible_connection: local
+
+#init_external_entries:
+#  - type: A
+#    record: "api.{{ guid }}"
+#    value: "{{ r_osp_facts | json_query(ansible_facts.openstack_servers[?(@.name=='ocp-tkummer-bastion')].private_v4 | [@])}}"
+#    ttl: 60
+#    state: present
+#  - type: A
+#    record: "lb.{{ guid }}"
+#    value: "{{ hostvars['ocp-' + guid + '-lb'].openstack.public_v4 }}"
+#    ttl: 60
+#    state: present
+#  - type: A
+#    record: "*.apps.{{ guid }}"
+#    value: "{{ hostvars['ocp-' + guid + '-lb'].openstack.public_v4 }}"
+#    ttl: 60
+#    state: present
+
+init_internal_entries:
+  - type: A
+    record: "ocp-bastion.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-bastion`].public_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "api.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "lb.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "*.apps.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "api-int.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+
+final_external_entries:
+  - type: A
+    record: "api.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+
+final_internal_entries:
+  - type: A
+    record: "bootstrap.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-bootstrap`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "master-0.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-0`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "master-1.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-1`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "master-2.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-2`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "etcd-0.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-0`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "etcd-1.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-1`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "etcd-2.{{ guid }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-3`].private_v4 | [0]') }}"
+    ttl: 60
+    state: present
+  - type: SRV
+    record: "_etcd-server-ssl._tcp.{{ guid }}"
+    value:
+      - "0 0 2380 etcd-0.{{ guid }}"
+      - "0 0 2380 etcd-1.{{ guid }}"
+      - "0 0 2380 etcd-2.{{ guid }}"
+    ttl: 60
+
+worker_internal_entries:
+  - type: A
+    record: "*.apps.{{ guid }}"
+    value: "{{ hostvars['ocp-' + guid + '-lb']['openstack']['private_v4'] }}"
+    ttl: 60
+  - type: A
+    record: "worker-0.{{ guid }}"
+    value: "{{ hostvars['ocp-' + guid + '-worker-0']['openstack']['private_v4'] }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "worker-1.{{ guid }}"
+    value: "{{ hostvars['ocp-' + guid + '-worker-1']['openstack']['private_v4'] }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "worker-2.{{ guid }}"
+    value: "{{ hostvars['ocp-' + guid + '-worker-2']['openstack']['private_v4'] }}"
+    ttl: 60
+    state: present
+  - type: A
+    record: "worker-3.{{ guid }}"
+    value: "{{ hostvars['ocp-' + guid + '-worker-3']['openstack']['private_v4'] }}"
+    ttl: 60
+    state: present
+

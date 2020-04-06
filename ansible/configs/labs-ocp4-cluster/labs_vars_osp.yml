@@ -94,7 +94,7 @@ stacks_install:
 - name: worker-nodes
 
 instances_infra:
-- name: bastion
+- name: "ocp-bastion"
   stack: bastion
   count: 1
   unique: yes
@@ -115,7 +115,7 @@ instances_infra:
   security_groups:
   - ssh-sec-group
 
-- name: loadbalancer
+- name: "ocp-lb"
   count: 1
   stack: utility
   unique: yes
@@ -139,7 +139,7 @@ instances_infra:
   - dns-sec-group
   - https-sec-group
 
-- name: web-server
+- name: "ocp-web-server"
   count: 1
   unique: yes
   stack: utility
@@ -163,7 +163,7 @@ instances_infra:
   - http-sec-group
 
 instances_install:
-- name: bootstrap
+- name: "ocp-bootstrap"
   count: 1
   stack: bootstrap
   unique: yes
@@ -186,7 +186,7 @@ instances_install:
   - oc-sec-group
   - dns-sec-group
 
-- name: master-node
+- name: "ocp-master"
   count: 3 
   unique: yes
   stack: master-nodes
@@ -211,7 +211,7 @@ instances_install:
   - https-sec-group
    
 
-- name: worker-node
+- name: "ocp-worker"
   count: 1 
   unique: yes
   stack: worker-nodes

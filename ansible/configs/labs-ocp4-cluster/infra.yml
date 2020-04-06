@@ -60,17 +60,21 @@
     - name: debug osp_facts
       debug:
         var: r_osp_facts
-        verbosity: 2
+        verbosity: 2 
 
-    - name: Run infra-osp-dns Role
+
+    - name: set_internal records
+      set_fact:
+         internal_dns_entries: "{{ init_internal_entries }}"
+
+    - name: Run manage-dns-records Role
       import_role:
-        name: infra-osp-dns
-      vars:
-        _dns_state: present
+        name: manage-dns-records
 
     - name: Run infra-osp-create-inventory Role
       import_role:
         name: infra-osp-create-inventory
+
 
     - name: Run Common SSH Config Generator Role
       import_role:

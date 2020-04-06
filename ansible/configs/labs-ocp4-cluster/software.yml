@@ -49,8 +49,6 @@
   hosts: localhost
   become: false
   tasks:
-  - debug:
-      var: r_osp_facts
   - name: create user-data
     template:
       src: files/user-data.j2
@@ -117,12 +115,13 @@
       debug:
         var: r_osp_facts
         verbosity: 2
+    - name: set_internal_entries
+      set_fact:
+         internal_dns_entries: "{{ final_internal_entries }}"
 
-    - name: Run infra-osp-dns Role
+    - name: Run manage-dns-records role
       import_role:
-        name: infra-osp-dns
-      vars:
-        _dns_state: present
+        name: manage-dns-records
 
     - name: Run infra-osp-create-inventory Role
       import_role:

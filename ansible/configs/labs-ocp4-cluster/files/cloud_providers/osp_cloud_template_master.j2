@@ -132,7 +132,7 @@ resources:
 {% endfor %}
           provider_network: {{ provider_network }}
 {% if instance['count'] > 1 %}
-          instance_name: {{ instance['name'] }}%index%
+          instance_name: {{ instance['name'] }}-%index%
 {% else %}
           instance_name: {{ instance['name'] }}
 {% endif %}
