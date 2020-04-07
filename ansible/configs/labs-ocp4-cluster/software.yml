@@ -72,10 +72,9 @@
     OS_PROJECT_DOMAIN_ID: "{{ osp_auth_project_domain }}"
     OS_USER_DOMAIN_NAME: "{{ osp_auth_user_domain }}"
   tasks:
-    - name: set stacks and instances
+    - name: set stacks
       set_fact:
         stacks: "{{ stacks_install }}"
-        instances: "{{ instances_install }}"
     - name: Run infra-osp-template-generate Role
       import_role:
         name: infra-osp-template-generate
@@ -147,17 +146,17 @@
 
 
   - import_role:
-      name: load-balancers/manage-haproxy
+      name: manage-haproxy
       tasks_from: install
     tags:
     - 'always'
   - import_role:
-      name: load-balancers/manage-haproxy
+      name: manage-haproxy
       tasks_from: generate-config
     tags:
     - 'always'
   - import_role:
-      name: load-balancers/manage-haproxy
+      name: manage-haproxy
       tasks_from: activate-config
     tags:
     - 'always'

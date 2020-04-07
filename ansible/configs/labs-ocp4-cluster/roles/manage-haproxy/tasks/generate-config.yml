@@ -55,7 +55,7 @@
     assemble:
       src: '{{ haproxy_temp_dir }}'
       dest: '{{ haproxy_temp_file }}'
-
+      mode: 0666
   # Delegate the entire block to "localhost"
   delegate_to: localhost
   run_once: True

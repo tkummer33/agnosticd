@@ -27,7 +27,7 @@ init_internal_entries:
     state: present
   - type: A
     record: "api.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].public_v4 | [0]') }}"
     ttl: 60
     state: present
   - type: A
@@ -37,19 +37,19 @@ init_internal_entries:
     state: present
   - type: A
     record: "*.apps.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].public_v4 | [0]') }}"
     ttl: 60
     state: present
   - type: A
     record: "api-int.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].public_v4 | [0]') }}"
     ttl: 60
     state: present
 
 final_external_entries:
   - type: A
     record: "api.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].private_v4 | [0]') }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].public_v4 | [0]') }}"
     ttl: 60
     state: present
 

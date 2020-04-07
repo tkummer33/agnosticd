@@ -16,7 +16,6 @@
     - debug:
         msg: "Step 000 Pre Infrastructure - Dummy action"
 
-    - name: set values for instances and stacks variables
+    - name: set value for stacks variable
       set_fact:
         stacks: "{{ stacks_infra }}"
-        instances: "{{ instances_infra }}"

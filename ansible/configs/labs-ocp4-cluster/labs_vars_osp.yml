@@ -93,7 +93,7 @@ stacks_install:
 - name: master-nodes
 - name: worker-nodes
 
-instances_infra:
+instances:
 - name: "ocp-bastion"
   stack: bastion
   count: 1
@@ -162,7 +162,6 @@ instances_infra:
   - dns-sec-group
   - http-sec-group
 
-instances_install:
 - name: "ocp-bootstrap"
   count: 1
   stack: bootstrap
