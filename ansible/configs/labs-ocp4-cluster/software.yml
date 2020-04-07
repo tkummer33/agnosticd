@@ -137,3 +137,27 @@
     - create_inventory
     - must
 
+- name: Step 004.7 install and configure loadbalancer
+  hosts: lb_vms
+  gather_facts: false
+  become: true
+  tasks:
+  - set_fact:
+      lb_config: "{{ install_lb_config }}"
+
+
+  - import_role:
+      name: load-balancers/manage-haproxy
+      tasks_from: install
+    tags:
+    - 'always'
+  - import_role:
+      name: load-balancers/manage-haproxy
+      tasks_from: generate-config
+    tags:
+    - 'always'
+  - import_role:
+      name: load-balancers/manage-haproxy
+      tasks_from: activate-config
+    tags:
+    - 'always'

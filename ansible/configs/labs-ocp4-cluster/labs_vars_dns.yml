@@ -86,7 +86,7 @@ final_internal_entries:
     state: present
   - type: A
     record: "etcd-2.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-3`].private_v4 | [0]') }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-master-2`].private_v4 | [0]') }}"
     ttl: 60
     state: present
   - type: SRV

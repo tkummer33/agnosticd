@@ -1,1 +1,1 @@
-{{ '{"ignition":{"config":{"append":[{"source":"http://' }}{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?(@.metadata.AnsibleGroup==`host_www`)].public_v4|[0]') }}/{{ item }}.ign{{ '"}]},"version":"2.2.0"}}' }}
+{{ '{"ignition":{"config":{"append":[{"source":"http://' }}{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?(@.metadata.AnsibleGroup==`host_www`)].private_v4|[0]') }}/{{ item }}.ign{{ '"}]},"version":"2.2.0"}}' }}

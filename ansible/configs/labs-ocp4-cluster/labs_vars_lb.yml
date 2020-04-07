@@ -1,0 +1,158 @@
+---
+
+
+init_lb_config:
+  stats_page:
+    enabled: True
+    host_port: 8080
+    username: admin
+    password: admin
+  frontends:
+    - lb_name: "{{ guid }}-6443"
+      lb_host_port: 6443
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-22623"
+      lb_host_port: 22623
+      lb_mode: tcp
+  lb_entries:
+    - lb_match_port: 6443
+      lb_mode: tcp
+      backends:
+        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+    - lb_match_port: 22623
+      lb_mode: tcp
+      backends:
+        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+
+install_lb_config:
+  stats_page:
+    enabled: True
+    host_port: 8080
+    username: admin
+    password: admin
+  frontends:
+    - lb_name: "{{ guid }}-6443"
+      lb_host_port: 6443
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-22623"
+      lb_host_port: 22623
+      lb_mode: tcp
+  lb_entries:
+    - lb_match_port: 6443
+      lb_mode: tcp
+      backends:
+        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+    - lb_match_port: 22623
+      lb_mode: tcp
+      backends:
+        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+
+post_install_lb_config:
+  stats_page:
+    enabled: True
+    host_port: 8080
+    username: admin
+    password: admin
+  frontends:
+    - lb_name: "{{ guid }}-6443"
+      lb_host_port: 6443
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-22623"
+      lb_host_port: 22623
+      lb_mode: tcp
+  lb_entries:
+    - lb_match_port: 6443
+      lb_mode: tcp
+      backends:
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+    - lb_match_port: 22623
+      lb_mode: tcp
+      backends:
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+
+final_lb_config:
+  stats_page:
+    enabled: True
+    host_port: 8080
+    username: admin
+    password: admin
+  frontends:
+    - lb_name: "{{ guid }}-80"
+      lb_host_port: 80
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-443"
+      lb_host_port: 443
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-6443"
+      lb_host_port: 6443
+      lb_mode: tcp
+    - lb_name: "{{ guid }}-22623"
+      lb_host_port: 22623
+      lb_mode: tcp
+  lb_entries:
+    - lb_match_port: 80
+      lb_mode: tcp
+      backends:
+        - host: "worker-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 80
+        - host: "worker-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 80
+        - host: "worker-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 80
+        - host: "worker-3.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 80
+    - lb_match_port: 443
+      lb_mode: tcp
+      backends:
+        - host: "worker-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 443
+        - host: "worker-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 443
+        - host: "worker-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 443
+        - host: "worker-3.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 443
+    - lb_match_port: 6443
+      lb_mode: tcp
+      backends:
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 6443
+    - lb_match_port: 22623
+      lb_mode: tcp
+      backends:
+        - host: "master-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
+        - host: "master-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
+          port: 22623
