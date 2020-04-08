@@ -95,7 +95,7 @@ final_internal_entries:
       - "0 0 2380 etcd-0.{{ guid }}"
       - "0 0 2380 etcd-1.{{ guid }}"
       - "0 0 2380 etcd-2.{{ guid }}"
-    ttl: 60
+    state: present
 
 worker_internal_entries:
   - type: A

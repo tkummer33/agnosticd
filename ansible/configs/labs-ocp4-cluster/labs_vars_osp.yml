@@ -184,6 +184,8 @@ instances:
   - ssh-sec-group
   - oc-sec-group
   - dns-sec-group
+  - http-sec-group
+  - https-sec-group
 
 - name: "ocp-master"
   count: 3 
@@ -208,7 +210,7 @@ instances:
   - oc-sec-group
   - dns-sec-group
   - https-sec-group
-   
+  - http-sec-group   
 
 - name: "ocp-worker"
   count: 1 
