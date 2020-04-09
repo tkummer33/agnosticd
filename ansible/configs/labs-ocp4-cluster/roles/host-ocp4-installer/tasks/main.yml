@@ -4,34 +4,38 @@
 - name: Generate install_config.yaml
   import_tasks: generate_install_config.yml
 
-- name: Create deployinprogress file
-  file:
-    path: /tmp/deployinprogress
-    state: touch
+#- name: Create deployinprogress file
+#  file:
+#    path: /tmp/deployinprogress
+#    state: touch
 
 - name: Run create manifests
   become: no
   tags:
   - run_installer
-  command: openshift-install create manifests --dir=/home/{{ ansible_user }}/{{ cluster_name }}
+  command: "openshift-install create manifests --dir=/home/{{ ansible_user }}/{{ cluster_name }}/"
 
 - name: change masterschedulable
   lineinfile:
-    path: /home/{{ ansible_user }}/{{ cluster_name }}/manifests/cluster-scheduler-02-config.yml 
+    path: "/home/{{ ansible_user }}/{{ cluster_name }}/manifests/cluster-scheduler-02-config.yml" 
     state: present
     regexp: 'mastersSchedulable'
-    line: 'mastersSchedulable=false'
+    line: '  mastersSchedulable: False'
+
+- fetch:
+    src: "/home/{{ ansible_user }}/{{ cluster_name }}/manifests/cluster-scheduler-02-config.yml"
+    dest: "{{ output_dir }}/cluster-scheduler-02-config.yml"
 
 - name: Run create ignition configs
   become: no
-  command: openshift-install create ignition-configs --dir=/home/{{ ansible_user }}/{{ cluster_name }}
+  command: "openshift-install create ignition-configs --dir=/home/{{ ansible_user }}/{{ cluster_name }}/"
 
 - name: fetch the ignition directory
   become: no
   fetch: 
     dest: /tmp/output_dir/ignition_files/
     flat: yes
-    src: /home/{{ ansible_user }}/{{ cluster_name }}/{{ item }}.ign
+    src: "/home/{{ ansible_user }}/{{ cluster_name }}/{{ item }}.ign"
   loop:  
     - worker
     - master
