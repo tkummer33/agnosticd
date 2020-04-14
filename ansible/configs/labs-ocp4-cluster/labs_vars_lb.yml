@@ -123,20 +123,12 @@ final_lb_config:
           port: 80
         - host: "worker-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
           port: 80
-        - host: "worker-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 80
-        - host: "worker-3.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 80
     - lb_match_port: 443
       lb_mode: tcp
       backends:
         - host: "worker-0.{{ guid }}.{{ osp_cluster_dns_zone }}"
           port: 443
         - host: "worker-1.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 443
-        - host: "worker-2.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 443
-        - host: "worker-3.{{ guid }}.{{ osp_cluster_dns_zone }}"
           port: 443
     - lb_match_port: 6443
       lb_mode: tcp

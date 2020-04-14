@@ -90,7 +90,7 @@
   hosts:
     - all:!windows:!network
   gather_facts: false
-  any_errors_fatal: true
+  any_errors_fatal: false
   ignore_errors: false
   tags:
     - step001

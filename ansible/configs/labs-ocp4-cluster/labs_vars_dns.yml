@@ -99,27 +99,12 @@ final_internal_entries:
 
 worker_internal_entries:
   - type: A
-    record: "*.apps.{{ guid }}"
-    value: "{{ hostvars['ocp-' + guid + '-lb']['openstack']['private_v4'] }}"
-    ttl: 60
-  - type: A
     record: "worker-0.{{ guid }}"
-    value: "{{ hostvars['ocp-' + guid + '-worker-0']['openstack']['private_v4'] }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-worker-0`].private_v4 | [0]') }}"
     ttl: 60
     state: present
   - type: A
     record: "worker-1.{{ guid }}"
-    value: "{{ hostvars['ocp-' + guid + '-worker-1']['openstack']['private_v4'] }}"
+    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-worker-1`].private_v4 | [0]') }}"
     ttl: 60
     state: present
-  - type: A
-    record: "worker-2.{{ guid }}"
-    value: "{{ hostvars['ocp-' + guid + '-worker-2']['openstack']['private_v4'] }}"
-    ttl: 60
-    state: present
-  - type: A
-    record: "worker-3.{{ guid }}"
-    value: "{{ hostvars['ocp-' + guid + '-worker-3']['openstack']['private_v4'] }}"
-    ttl: 60
-    state: present
-

@@ -91,6 +91,7 @@ stacks_infra:
 stacks_install:
 - name: bootstrap
 - name: master-nodes
+stacks_worker:
 - name: worker-nodes
 
 instances:
@@ -213,7 +214,7 @@ instances:
   - http-sec-group   
 
 - name: "ocp-worker"
-  count: 1 
+  count: 2
   unique: yes
   stack: worker-nodes
   alt_name:

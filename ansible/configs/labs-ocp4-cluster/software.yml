@@ -160,3 +160,127 @@
       tasks_from: activate-config
     tags:
     - 'always'
+
+- name: Step 004.8 wait-for bootstrap-complete
+  hosts: bastions
+  gather_facts: false
+  become: false
+  tasks:
+  - name: wait for bootstrap to complete
+    command: "openshift-install --dir=/home/{{ ansible_user }}/{{ cluster_name }}/ wait-for bootstrap-complete"
+    register: ocp_install_output
+  - debug:
+      var: ocp_install_output
+
+- name: Step 004.9 remove bootstrap from loadbalancer
+  hosts: lb_vms
+  gather_facts: false
+  become: true
+  tasks:
+  - set_fact:
+      lb_config: "{{ post_install_lb_config }}"
+
+  - import_role:
+      name: manage-haproxy
+      tasks_from: generate-config
+    tags:
+    - 'always'
+  - import_role:
+      name: manage-haproxy
+      tasks_from: activate-config
+    tags:
+    - 'always'
+
+- name: Step 004.10 remove bootstrap stack
+  hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+  - name: delete bootstrap stack
+    command: "openstack stack delete base-stack-{{ guid }}-bootstrap"
+
+- name: step 004.11 deploy the infrastructure (stacks_worker)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  environment:
+    OS_AUTH_URL: "{{ osp_auth_url }}"
+    OS_USERNAME: "{{ osp_auth_username }}"
+    OS_PASSWORD: "{{ osp_auth_password }}"
+    OS_PROJECT_NAME: "admin"
+    OS_PROJECT_DOMAIN_ID: "{{ osp_auth_project_domain }}"
+    OS_USER_DOMAIN_NAME: "{{ osp_auth_user_domain }}"
+  tasks:
+    - name: set stacks
+      set_fact:
+        stacks: "{{ stacks_worker }}"
+    - name: Run infra-osp-template-generate Role
+      import_role:
+        name: infra-osp-template-generate
+
+    - name: Run infra-osp-template-create Role
+      import_role:
+        name: infra-osp-template-create
+
+
+- name: Step 004.12 Create Inventory and SSH config setup add workers to dns
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  tags:
+    - step001
+    - step001.2
+    - create_inventory
+    - create_ssh_config
+  environment:
+    OS_AUTH_URL: "{{ osp_auth_url }}"
+    OS_USERNAME: "{{ osp_auth_username }}"
+    OS_PASSWORD: "{{ osp_auth_password }}"
+    OS_PROJECT_NAME: "{{ osp_project_name }}"
+    OS_PROJECT_DOMAIN_ID: "{{ osp_auth_project_domain }}"
+    OS_USER_DOMAIN_NAME: "{{ osp_auth_user_domain }}"
+  tasks:
+  - name: Gather instance facts
+    os_server_facts:
+      server: "*"
+      filters:
+        metadata:
+          guid: "{{ guid }}"
+          env_type: "{{ env_type }}"
+    register: r_osp_facts
+
+  - name: debug osp_facts
+    debug:
+      var: r_osp_facts
+      verbosity: 2
+
+  - name: set the variable for dns role
+    set_fact:
+      internal_dns_entries: "{{ worker_internal_entries }}"
+
+  - name: Run manage-dns-records role
+    import_role:
+      name: manage-dns-records
+
+
+- name: Step 004.13 add workers to loadbalancer
+  hosts: lb_vms
+  gather_facts: false
+  become: true
+  tasks:
+  - set_fact:
+      lb_config: "{{ final_lb_config }}"
+
+  - import_role:
+      name: manage-haproxy
+      tasks_from: generate-config
+    tags:
+    - 'always'
+  - import_role:
+      name: manage-haproxy
+      tasks_from: activate-config
+    tags:
+    - 'always'
+
