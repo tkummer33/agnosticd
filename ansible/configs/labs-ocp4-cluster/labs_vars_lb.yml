@@ -1,31 +1,4 @@
 ---
-
-
-init_lb_config:
-  stats_page:
-    enabled: True
-    host_port: 8080
-    username: admin
-    password: admin
-  frontends:
-    - lb_name: "{{ guid }}-6443"
-      lb_host_port: 6443
-      lb_mode: tcp
-    - lb_name: "{{ guid }}-22623"
-      lb_host_port: 22623
-      lb_mode: tcp
-  lb_entries:
-    - lb_match_port: 6443
-      lb_mode: tcp
-      backends:
-        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 6443
-    - lb_match_port: 22623
-      lb_mode: tcp
-      backends:
-        - host: "bootstrap.{{ guid }}.{{ osp_cluster_dns_zone }}"
-          port: 22623
-
 install_lb_config:
   stats_page:
     enabled: True

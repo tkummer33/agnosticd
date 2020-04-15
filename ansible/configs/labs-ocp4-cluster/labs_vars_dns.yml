@@ -46,13 +46,6 @@ init_internal_entries:
     ttl: 60
     state: present
 
-final_external_entries:
-  - type: A
-    record: "api.{{ guid }}"
-    value: "{{ r_osp_facts | json_query('ansible_facts.openstack_servers[?name==`ocp-lb`].public_v4 | [0]') }}"
-    ttl: 60
-    state: present
-
 final_internal_entries:
   - type: A
     record: "bootstrap.{{ guid }}"
