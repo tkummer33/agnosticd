@@ -46,8 +46,7 @@
     shell: "oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve"
 
   - name: wait-for install-complete
-    command: "openshift-install --dir=/home/{{ ansible_user }}/{{ cluster_name }}/ wait-for bootstrap-comp
-lete"
+    command: "openshift-install --dir=/home/{{ ansible_user }}/{{ cluster_name }}/ wait-for install-complete"
     register: complete_msg
 
   - debug:
