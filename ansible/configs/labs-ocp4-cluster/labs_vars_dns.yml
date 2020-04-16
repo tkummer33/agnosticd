@@ -1,24 +1,5 @@
 ---
-
-#ansible_connection: local
-
-#init_external_entries:
-#  - type: A
-#    record: "api.{{ guid }}"
-#    value: "{{ r_osp_facts | json_query(ansible_facts.openstack_servers[?(@.name=='ocp-tkummer-bastion')].private_v4 | [@])}}"
-#    ttl: 60
-#    state: present
-#  - type: A
-#    record: "lb.{{ guid }}"
-#    value: "{{ hostvars['ocp-' + guid + '-lb'].openstack.public_v4 }}"
-#    ttl: 60
-#    state: present
-#  - type: A
-#    record: "*.apps.{{ guid }}"
-#    value: "{{ hostvars['ocp-' + guid + '-lb'].openstack.public_v4 }}"
-#    ttl: 60
-#    state: present
-
+# below are all the records necessary for initial setup. Only the "name" in the query has to be updated
 init_internal_entries:
   - type: A
     record: "ocp-bastion.{{ guid }}"
@@ -46,6 +27,7 @@ init_internal_entries:
     ttl: 60
     state: present
 
+# entries below are required for the bootstrap, this config is applied once the control plane and bootstrap nodes are created    
 final_internal_entries:
   - type: A
     record: "bootstrap.{{ guid }}"
@@ -90,6 +72,7 @@ final_internal_entries:
       - "0 0 2380 etcd-2.{{ guid }}"
     state: present
 
+# section below configures entries for worker nodes, this config is applied after provisioning of worker nodes
 worker_internal_entries:
   - type: A
     record: "worker-0.{{ guid }}"

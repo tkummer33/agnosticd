@@ -19,7 +19,33 @@ The following config includes:
 
 == Review the `labs_vars_osp.yml` variable file
 
-* This file link:./labs_vars_osp.yml[./labs_vars.osp.yml] contains variables you need to define to control the deployment of openstack infrastructure.
+* This file link:./labs_vars_osp.yml[./labs_vars_osp.yml] contains variables you need to define to control the deployment of openstack infrastructure.
+
+* The Deployment is separated in three steps.
+*stacks_infra* - bastion, webserver and loadbalancer is deployed here. The networking and ssh_key is created in this step as well. 
+*stacks_install* - bootstrap and master nodes are deployed in this step
+*stacks_worker* - worker nodes are deployed here
+
+The instances configuration has to contain "stack" variable with the stacks {{ name }} as a value.
+== Review the `labs_vars_dns.yml` variable file
+
+* This file link:./labs_vars_dns.yml[./labs_vars_dns.yml] contains variables with the DNS records you need for the OCP4 deployment
+
+* This dns config is executed in three steps
+*init_entries* - records for bastion, api, lb, api-int and \*.apps are are created
+*final_entries* - bootstrap, master, etcd and service records are created 
+*worker_entries* - worker records are created
+
+
+== Review the `labs_vars_lb.yml` variable file
+
+* This file link:./labs_vars_lb.yml[./labs_vars_lb.yml] contains variables related to configuration of the loadbalancer
+
+* The LB config is executed in three steps
+*install_lb_config* - this configuration is required for successfull bootstrap. Ports 6443 and 22623 are balanced to masters and bootstrap nodes.
+*post_install_lb_config* - the bootstrap is removed from loadbalancer
+*final_lb_config* - ports 80 and 443 are pointed to worker nodes
+
 
 == Secrets
 
@@ -30,8 +56,6 @@ You will needs to define the `ocp4_pull_secret` variable in order to deploy this
 Add this variable to your secret file.
 
 * secret.yaml skeleton can be found here link:./secret_skeleton.yaml[./secret_skeleton.yml]. COPY IT TO YOUR HOMEDIR AND EDIT THERE.
-
-[LABS] This might be partially replaced by RC file. At this point the AgnosticD expects the vars as they are in secret.yaml, unfortunately I didn't find the option to use custom CA in secret.yaml so you have to export your OS_CACERT as well.
 
 [source,yaml]
 ----
@@ -45,9 +69,10 @@ You can create yaml files of your desired configs and secrets and execute them f
 `ansible-playbook ansible/main.yaml -e @myenvironment-variables.yml  -e@my-secrets.yml`
 
 == Workstation Setup:
-[LABS] here we might use container in the future instead of  setting up localhost
+[WIP] - we should create container image for this
+You need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
 
-You also need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
+edit /etc/resolv.conf to point to the dns server used for cluster dns records
 
 install required packages
 git clone https://github.com/redhat-cop/agnosticd.git cd agnosticd git checkout disco-ocp4
