@@ -69,13 +69,21 @@ You can create yaml files of your desired configs and secrets and execute them f
 `ansible-playbook ansible/main.yaml -e @myenvironment-variables.yml  -e@my-secrets.yml`
 
 == Workstation Setup:
-[WIP] - we should create container image for this  
+
+[WIP] - we should create container image for this
+  
 You need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
 
 edit /etc/resolv.conf to point to the dns server used for cluster dns records
 
 install required packages
-git clone https://github.com/redhat-cop/agnosticd.git cd agnosticd git checkout disco-ocp4
+
+git clone https://github.com/redhat-cop/agnosticd.git 
+
+cd agnosticd 
+
+git checkout disco-ocp4
+
 pip install -r ./ansible/configs/ocp4-disconnected-ha-lab/files/admin_host_requirements.txt
 
 More detailed env_setup section is ocp4-cluster config
