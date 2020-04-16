@@ -21,10 +21,10 @@ The following config includes:
 
 * This file link:./labs_vars_osp.yml[./labs_vars_osp.yml] contains variables you need to define to control the deployment of openstack infrastructure.
 
-* The Deployment is separated in three steps.
-*stacks_infra* - bastion, webserver and loadbalancer is deployed here. The networking and ssh_key is created in this step as well. 
-*stacks_install* - bootstrap and master nodes are deployed in this step
-*stacks_worker* - worker nodes are deployed here
+* The Deployment is separated in three steps.  
+*stacks_infra* - bastion, webserver and loadbalancer is deployed here. The networking and ssh_key is created in this step as well.   
+*stacks_install* - bootstrap and master nodes are deployed in this step  
+*stacks_worker* - worker nodes are deployed here  
 
 The instances configuration has to contain "stack" variable with the stacks {{ name }} as a value.
 == Review the `labs_vars_dns.yml` variable file
@@ -41,10 +41,10 @@ The instances configuration has to contain "stack" variable with the stacks {{ n
 
 * This file link:./labs_vars_lb.yml[./labs_vars_lb.yml] contains variables related to configuration of the loadbalancer
 
-* The LB config is executed in three steps
-*install_lb_config* - this configuration is required for successfull bootstrap. Ports 6443 and 22623 are balanced to masters and bootstrap nodes.
-*post_install_lb_config* - the bootstrap is removed from loadbalancer
-*final_lb_config* - ports 80 and 443 are pointed to worker nodes
+* The LB config is executed in three steps  
+*install_lb_config* - this configuration is required for successfull bootstrap. Ports 6443 and 22623 are balanced to masters and bootstrap nodes.  
+*post_install_lb_config* - the bootstrap is removed from loadbalancer  
+*final_lb_config* - ports 80 and 443 are pointed to worker nodes  
 
 
 == Secrets
@@ -69,7 +69,7 @@ You can create yaml files of your desired configs and secrets and execute them f
 `ansible-playbook ansible/main.yaml -e @myenvironment-variables.yml  -e@my-secrets.yml`
 
 == Workstation Setup:
-[WIP] - we should create container image for this
+[WIP] - we should create container image for this  
 You need to source the rc file for the environment. The current AgnosticD doesn't support OS_CACERT variable in the secret.yml
 
 edit /etc/resolv.conf to point to the dns server used for cluster dns records
